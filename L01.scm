@@ -89,3 +89,21 @@
 ;; answer
 http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html
 
+
+
+;; yet another
+(define (my-last ls)
+  (pair-fold (lambda (pr acc)
+               (if (= (length pr) 1)
+                   pr
+                   acc))
+             #f ls))
+
+
+(my-last '(a b c d))
+;; (d)
+(my-last '())
+;; error
+(my-last '(a . b))
+;; error
+
