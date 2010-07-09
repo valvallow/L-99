@@ -71,4 +71,21 @@
 ;; (a . b)
 
 
+;; ver 5
+(define (my-last ls)
+  (if (or (null? (cdr ls))
+          (not (list? (cdr ls))))
+      ls
+      (my-last (cdr ls))))
+
+(my-last '(a b c d))
+;; (d)
+(my-last '())
+;; error
+(my-last '(a . b))
+;; (a . b)
+
+
 ;; answer
+http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html
+
