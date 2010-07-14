@@ -40,3 +40,20 @@
 ;; (my-but-last '())
 ;; #f
 
+
+;; syntax-rules
+(define-syntax my-but-last
+  (syntax-rules ()
+    ((_ (x y))
+     '(x y))
+    ((_ (x y z ...))
+     (my-but-last (y z ...)))))
+
+(my-but-last (a b c d))
+;; (c d)
+(my-but-last (c d))
+;; (c d)
+(my-but-last (d))
+;; error
+(my-but-last ())
+;; error
