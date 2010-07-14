@@ -103,7 +103,7 @@ http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Ni
 (my-last '(a b c d))
 ;; (d)
 (my-last '())
-;; error
+;; #f
 (my-last '(a . b))
 ;; error
 
