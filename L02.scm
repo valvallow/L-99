@@ -40,3 +40,63 @@
 (my-but-last '())
 ;; #f
 
+
+;; syntax-rules
+(define-syntax my-but-last
+  (syntax-rules ()
+    ((_ (x y))
+     '(x y))
+    ((_ (x y z ...))
+     (my-but-last (y z ...)))))
+
+(my-but-last (a b c d))
+;; (c d)
+(my-but-last (c d))
+;; (c d)
+(my-but-last (d))
+;; error
+(my-but-last ())
+;; error
+
+
+;; failed option
+(use srfi-1)
+(define (my-but-last ls . opt)
+  (let-optionals* opt ((failed #f))
+    (pair-fold (lambda (pr acc)
+                 (if (null? (cdr pr))
+                     acc
+                     pr))
+                 failed ls)))
+
+(my-but-last '(a b c d))
+;; (c d)
+(my-but-last '(c d))
+;; (c d)
+(my-but-last '(d))
+;; #f
+(my-but-last '() '())
+;; ()
+
+
+;; values
+(define (my-but-last ls)
+  (let1 r (pair-fold (lambda (pr acc)
+                       (if (null? (cdr pr))
+                           acc
+                           pr))
+                     #f ls)
+    (values r (not (eq? r #f)))))
+
+(my-but-last '(a b c d))
+;; (c d)
+;; #t
+(my-but-last '(c d))
+;; (c d)
+;; #t
+(my-but-last '(d))
+;; #f
+;; #f
+(my-but-last '())
+;; #f
+;; #f

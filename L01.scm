@@ -103,7 +103,43 @@ http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Ni
 (my-last '(a b c d))
 ;; (d)
 (my-last '())
-;; error
+;; #f
 (my-last '(a . b))
 ;; error
 
+
+;; syntax-rules
+(define-syntax my-last
+  (syntax-rules ()
+    ((_ (x))
+     '(x))
+    ((_ (x y))
+     (my-last (y)))
+    ((_ (x y z ...))
+     (my-last (y z ...)))))
+
+(my-last (a b c d))
+;; (d)
+(my-last ())
+;; error
+(my-last (a . b))
+;; error
+
+
+;; failed option
+(define (my-last ls . opt)
+  (let-optionals* opt ((failed #f))
+    (pair-fold (lambda (pr acc)
+                 (if (null? (cdr pr))
+                     pr
+                     acc))
+               failed ls)))
+
+(my-last '(a b c d))
+;; (d)
+(my-last '())
+;; #f
+(my-last '() "hoge")
+;; "hoge"
+(my-last '(a . b))
+;; error
