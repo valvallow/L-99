@@ -78,3 +78,25 @@
 (my-but-last '() '())
 ;; ()
 
+
+;; values
+(define (my-but-last ls)
+  (let1 r (pair-fold (lambda (pr acc)
+                       (if (null? (cdr pr))
+                           acc
+                           pr))
+                     #f ls)
+    (values r (not (eq? r #f)))))
+
+(my-but-last '(a b c d))
+;; (c d)
+;; #t
+(my-but-last '(c d))
+;; (c d)
+;; #t
+(my-but-last '(d))
+;; #f
+;; #f
+(my-but-last '())
+;; #f
+;; #f
