@@ -57,3 +57,24 @@
 ;; error
 (my-but-last ())
 ;; error
+
+
+;; failed option
+(use srfi-1)
+(define (my-but-last ls . opt)
+  (let-optionals* opt ((failed #f))
+    (pair-fold (lambda (pr acc)
+                 (if (null? (cdr pr))
+                     acc
+                     pr))
+                 failed ls)))
+
+(my-but-last '(a b c d))
+;; (c d)
+(my-but-last '(c d))
+;; (c d)
+(my-but-last '(d))
+;; #f
+(my-but-last '() '())
+;; ()
+
