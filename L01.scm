@@ -143,3 +143,24 @@ http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Ni
 ;; "hoge"
 (my-last '(a . b))
 ;; error
+
+
+;; latest
+(define (my-last ls . opt)
+  (let-optionals* opt ((failed #f))
+    (let/cc hop
+      (pair-fold-right (lambda (pr acc)
+                         (print pr)
+                         (if (null? (cdr pr))
+                             (hop pr)
+                             acc))
+                       failed ls))))
+
+(my-last '(a b c d))
+;; (d)
+(my-last '())
+;; #f
+(my-last '() "hoge")
+;; "hoge"
+(my-last '(a . b))
+;; error
