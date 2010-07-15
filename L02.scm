@@ -100,3 +100,23 @@
 (my-but-last '())
 ;; #f
 ;; #f
+
+
+;; latest
+(define (my-but-last ls . opt)
+  (let-optionals* opt ((failed #f))
+    (let/cc hop
+      (pair-fold-right (lambda (pr acc)
+                         (if (not (null? (cdr pr)))
+                             (hop pr)
+                             acc))
+                       failed ls))))
+
+(my-but-last '(a b c d))
+;; (c d)
+(my-but-last '(c d))
+;; (c d)
+(my-but-last '(d))
+;; #f
+(my-but-last '() '())
+;; ()
