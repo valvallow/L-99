@@ -1,21 +1,15 @@
 ;; L-99
 ;; http://github.com/valvallow/L-99
 
-;; P24 (*) Lotto: Draw N different random numbers from the set 1..M.
-;; The selected numbers shall be returned in a list.
+;; P25 (*) Generate a random permutation of the elements of a list.
 ;; Example:
-;; * (lotto-select 6 49)
-;; (23 1 17 33 21 37)
+;; * (rnd-permu '(a b c d e f))
+;; (B A D C E F)
 
-;; Hint: Combine the solutions of problems P22 and P23.
+;; Hint: Use the solution of problem P23.
 
 
-(use srfi-1) ; iota
 (use srfi-27) ; random-integer
-
-;; L22
-(define (range min max)
-  (iota (+ (- max min) 1) min))
 
 ;; L20
 (define (remove-at ls n)
@@ -39,9 +33,10 @@
                (cons (list-ref ls idx) acc))))))
 
 
-(define (lotto-select n max)
-  (rnd-select (range 1 max) n))
+(define (rnd-permu ls)
+  (rnd-select ls (length ls)))
 
-(lotto-select 6 49)
-;; (36 40 33 25 22 23)
-
+(rnd-permu '(a b c d e f))
+;; (b e a f d c)
+(rnd-permu '(a b c d e f))
+;; (a c e b d f)
