@@ -1,50 +1,26 @@
-;; L-99
-;; http://github.com/valvallow/L-99
-
 ;; P04 (*) Find the number of elements of a list.
 
 
-;; normal recur
-(define (my-length ls)
-  (if (null? ls)
-      0
-      (+ 1 (my-length (cdr ls)))))
+;; srfi-1
+(use srfi-1)
+(define (find-number-of-elements pred ls)
+  (list-index pred ls))
 
-(my-length '(1 2 3 4 5))
-;; 5
+;; gauche.sequence
+(use gauche.sequence)
+(define (find-number-of-elements pred ls)
+  (find-index pred ls))
 
+(define (find-number-of-elements pred ls)
+  (let rec ((ls ls)(index 0))
+    (and (not (null? ls))
+         (if  (pred (car ls))
+              index
+              (rec (cdr ls)(+ index 1))))))
 
-;; letrec
-(define (my-length ls)
-  (letrec
-      ((recur (lambda (ls acc)
-                (if (null? ls)
-                    acc
-                    (recur (cdr ls)(+ acc 1))))))
-    (recur ls 0)))
-
-(my-length '(1 2 3 4 5))
-;; 5
-
-
-;; named-let
-(define (my-length ls)
-  (let loop ((ls ls)(acc 0))
-    (if (null? ls)
-        acc
-        (loop (cdr ls)(+ acc 1)))))
-
-(my-length '(1 2 3 4 5))
-;; 5
-
-
-;; fold
-(define (my-length ls)
-  (fold (lambda (e acc)
-          (+ acc 1))
-        0 ls))
-
-(my-length '(1 2 3 4 5))
-;; 5
-
-;;
+(use gauche.test)
+(test-start "find-number-of-elements")
+(test* "" #f (find-number-of-elements (pa$ eq? 'c) '()))
+(test* "" 2 (find-number-of-elements (pa$ eq? 'c) '(a b c d)))
+(test* "" 2 (find-number-of-elements (pa$ eq? 3) '(1 2 3 4 5)))
+(test* "" #f (find-number-of-elements (pa$ eq? 3) '(a b c d)))
