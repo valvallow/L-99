@@ -9,90 +9,26 @@
 ;; (A B C A D E)
 
 
-(use srfi-1)
+(define (compress ls :optional (cmpfn eq?))
+  (let rec ((ls ls)(acc '()))
+    (if (null? ls)
+        (reverse acc)
+        (rec (cdr ls)(if (or (null? acc)
+                             (not (cmpfn (car ls)(car acc))))
+                         (cons (car ls) acc)
+                         acc)))))
 
-;; ver 1
-(define (compress ls)
-  (pair-fold (lambda (pr acc)
-               (if (null? (cdr pr))
-                   (append acc pr)
-                   (if (equal? (car pr)(cadr pr))
-                       acc
-                       (append acc (list (car pr))))))
-             '() ls))
-
-(compress '(a a a a b c c a a d e e e e))
-;; (a b c a d e)
-(compress '(a b))
-;; (a b)
-(compress '(a))
-;; (a)
-
-
-;; ver 2 : let/cc
-(define (compress ls)
-  (pair-fold
-   (lambda (pr acc)
-     (let/cc hop
-       (append acc
-               (if (null? (cdr pr))
-                   pr
-                   (if (equal? (car pr)(cadr pr))
-                       (hop acc)
-                       (list (car pr)))))))
-   '() ls))
-
-(compress '(a a a a b c c a a d e e e e))
-;; (a b c a d e)
-(compress '(a b))
-;; (a b)
-(compress '(a))
-;; (a)
+(use gauche.test)
+(test* "" '()(compress '()))
+(test* "" '(a)(compress '(a)))
+(test* "" '(a b)(compress '(a a b b)))
+(test* "" '(a b a b)(compress '(a a b a a a a b b)))
+(test* "" '(a b c a d e)(compress '(a b c c a a d e )))
+(test* "" '(a b c a d e)(compress '(a a a a b c c a a d e )))
+(test* "" '(a b c a d e)(compress '(a a a a b c c a a d e e e e)))
+(test* "" '((a b)(c a)(d e))(compress '((a b)(a b)(a b)(c a)(c a)(d e)(d e)) equal?))
 
 
-;; option
-(define (compress ls . opt)
-  (let-optionals* opt ((ep? equal?))
-    (pair-fold
-     (lambda (pr acc)
-       (let/cc hop
-         (append acc
-                 (if (null? (cdr pr))
-                     pr
-                     (if (ep? (car pr)(cadr pr))
-                         (hop acc)
-                         (list (car pr)))))))
-     '() ls)))
 
-
-(compress '(a a a a b c c a a d e e e e))
-;; (a b c a d e)
-(compress '(a b))
-;; (a b)
-(compress '(a))
-;; (a)
-(compress (map (cut cons <> '()) '(a a a a b c c a a d e e e e)) eq?)
-;; ((a) (a) (a) (a) (b) (c) (c) (a) (a) (d) (e) (e) (e) (e))
-(compress (map (cut cons <> '()) '(a a a a b c c a a d e e e e)))
-;; ((a) (b) (c) (a) (d) (e))
-
-
-;; tail call
-(define (compress ls)
-  (let loop ((ls ls)(acc '()))
-    (if (or (null? ls)
-            (null? (cdr ls)))
-        (append acc ls)
-        (loop (cdr ls)
-              (append acc (if (equal? (car ls)(cadr ls))
-                              '()
-                              (list (car ls))))))))
-
-(compress '(a a a a b c c a a d e e e e))
-;; (a b c a d e)
-(compress '(a b))
-;; (a b)
-(compress '(a))
-;; (a)
 
 
