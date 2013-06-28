@@ -18,6 +18,15 @@
                          (cons (car ls) acc)
                          acc)))))
 
+(define (compress ls :optional (cmpfn eq?))
+  (fold-right (^(e acc)
+          (if (or (null? acc)
+                  (not (cmpfn e (car acc))))
+              (cons e acc)
+              acc))
+        '()
+        ls))
+
 (use gauche.test)
 (test* "" '()(compress '()))
 (test* "" '(a)(compress '(a)))
