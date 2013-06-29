@@ -20,6 +20,14 @@
                              acc))))))
 
 
+(use gauche.sequence)
+(define (encode-direct ls)
+  (map (^e (if (null? (cdr e))
+               (car e)
+               (list (length e)(car e))))
+           (group-sequence ls)))
+
+
 (use gauche.test)
 (test* "" '()(encode-direct '()))
 (test* "" '((4 a) b (2 c) (2 a) d (4 e))(encode-direct '(a a a a b c c a a d e e e e)))
