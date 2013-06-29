@@ -6,9 +6,12 @@
 ;; * (dupli '(a b c c d))
 ;; (A A B B C C C C D D)
 
-
+(use srfi-1)
 (define (dupli ls)
-  (fold-right (lambda (e acc)
-                (append (list e e) acc))
-              '() ls))
+  (append-map (^e (list e e))
+              ls))
+
+(use gauche.test)
+(test* "" '()(dupli'()))
+(test* "" '(a a b b c c c c d d)(dupli '(a b c c d)))
 
